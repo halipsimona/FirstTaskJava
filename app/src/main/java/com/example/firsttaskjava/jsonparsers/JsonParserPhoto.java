@@ -1,7 +1,5 @@
 package com.example.firsttaskjava.jsonparsers;
 
-import android.util.Log;
-
 import com.example.firsttaskjava.util.Photo;
 
 import org.json.JSONArray;

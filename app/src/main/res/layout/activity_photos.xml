@@ -14,8 +14,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:numColumns="auto_fit"
-
         >
-
     </GridView>
 </androidx.constraintlayout.widget.ConstraintLayout>

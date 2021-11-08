@@ -1,7 +1,5 @@
 package com.example.firsttaskjava.adapters;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +14,9 @@ import java.util.List;
 
 public class GridAdapter extends BaseAdapter {
 
-    private List<Photo> photos;
-    private LayoutInflater inflater;
-    private int resource;
+    private final List<Photo> photos;
+    private final LayoutInflater inflater;
+    private final int resource;
 
     public GridAdapter( List<Photo> photoList, LayoutInflater inflater, int resource){
         this.photos=photoList;

@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class TypiApi {
-    private URL url;
     private HttpURLConnection con;
     private InputStream inputStream;
     private InputStreamReader inputStreamReader;
@@ -26,7 +25,7 @@ public class TypiApi {
     }
 
     private String getAlbumsFromApi(String link) throws IOException {
-        url=new URL(link);
+        URL url = new URL(link);
         con= (HttpURLConnection) url.openConnection();
         inputStream=con.getInputStream();
         inputStreamReader=new InputStreamReader(inputStream);

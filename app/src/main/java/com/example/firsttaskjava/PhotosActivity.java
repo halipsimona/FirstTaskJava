@@ -3,12 +3,10 @@ package com.example.firsttaskjava;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.GridView;
 
 import com.example.firsttaskjava.jsonparsers.JsonParserPhoto;
@@ -22,7 +20,7 @@ import java.util.List;
 public class PhotosActivity extends AppCompatActivity {
 
     private GridView gvPhotos;
-    private List<Photo> photoList=new ArrayList<>();
+    private final List<Photo> photoList=new ArrayList<>();
     public static final String ALBUM_ID_KEY="album_id_key";
     Intent intent;
     private int albumId;
@@ -48,21 +46,16 @@ public class PhotosActivity extends AppCompatActivity {
     }
 
     private void loadPhotos(int albumId) {
-        StringBuilder stringBuilder=new StringBuilder();
-        stringBuilder.append(MainActivity.link).append("/").append(albumId).append("/photos");
-        String photosLink=stringBuilder.toString();
+        String photosLink= MainActivity.link + "/" + albumId + "/photos";
 
         Thread thread = new Thread() {
             @Override
             public void run() {
                 final String result = new TypiApi().receiveFromNetwork(photosLink);
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Photo> photosFromJson = JsonParserPhoto.fromJSON(result);
-                        photoList.addAll(photosFromJson);
-                        notifyAdapter();
-                    }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    List<Photo> photosFromJson = JsonParserPhoto.fromJSON(result);
+                    photoList.addAll(photosFromJson);
+                    notifyAdapter();
                 });
             }
         };
@@ -74,11 +67,7 @@ public class PhotosActivity extends AppCompatActivity {
         new AlertDialog.Builder(getApplicationContext())
                 .setTitle("Error")
                 .setMessage("The album does not exist.")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> finish())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }

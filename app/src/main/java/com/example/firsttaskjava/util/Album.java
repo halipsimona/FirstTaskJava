@@ -1,6 +1,6 @@
 package com.example.firsttaskjava.util;
 
-
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,19 +8,15 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "albums")
 public class Album {
     @ColumnInfo(name="user_id")
-    private int userId;
+    private final int userId;
     @PrimaryKey
     @ColumnInfo(name="id")
     private int id;
     @ColumnInfo(name = "title")
-    private String title;
+    private final String title;
 
     public int getUserId() {
         return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public int getId() {
@@ -35,10 +31,7 @@ public class Album {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return "Album{" +
@@ -53,5 +46,5 @@ public class Album {
         this.id = id;
         this.title = title;
     }
-    public Album(){}
+
 }

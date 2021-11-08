@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.example.firsttaskjava.database.AlbumDao;
@@ -25,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ListView lvAlbums;
-    private List<Album> albums=new ArrayList<>();
+    private final List<Album> albums=new ArrayList<>();
     private AlbumDao albumDao;
     public final static String link="https://jsonplaceholder.typicode.com/albums";
     private static final String STATE_SCROLL_POSITION = "scrollPosition";
@@ -49,14 +48,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private AdapterView.OnItemClickListener albumClicked() {
-        return new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int id=albums.get(i).getId();
-                Intent intent=new Intent(getApplicationContext(),PhotosActivity.class);
-                intent.putExtra(PhotosActivity.ALBUM_ID_KEY,id);
-                startActivity(intent);
-            }
+        return (adapterView, view, i, l) -> {
+            int id=albums.get(i).getId();
+            Intent intent=new Intent(getApplicationContext(),PhotosActivity.class);
+            intent.putExtra(PhotosActivity.ALBUM_ID_KEY,id);
+            startActivity(intent);
         };
     }
 
@@ -65,12 +61,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final String result = new TypiApi().receiveFromNetwork(link);
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Album> albumsFromJson = JsonParserAlbum.fromJSON(result);
-                        insertIntoDB(albumsFromJson);
-                    }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    List<Album> albumsFromJson = JsonParserAlbum.fromJSON(result);
+                    insertIntoDB(albumsFromJson);
                 });
             }
         };
@@ -81,12 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 albumDao.insertAlbums(albumsToInsert);
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showAlbumsSorted();
-                    }
-                });
+                new Handler(Looper.getMainLooper()).post(() -> showAlbumsSorted());
             }
         };
         thread.start();
@@ -97,13 +85,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final List<Album> sortedAlbums=albumDao.getAlbumsSorted();
-                new Handler(getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        albums.clear();
-                        albums.addAll(sortedAlbums);
-                        notifyAdapter();
-                    }
+                new Handler(getMainLooper()).post(() -> {
+                    albums.clear();
+                    albums.addAll(sortedAlbums);
+                    notifyAdapter();
                 });
             }
         };
@@ -111,14 +96,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void notifyAdapter(){
-        ArrayAdapter adapter= (ArrayAdapter) lvAlbums.getAdapter();
+        BaseAdapter adapter = (BaseAdapter) lvAlbums.getAdapter();
         adapter.notifyDataSetChanged();
         lvAlbums.setSelection(savedPosition);
     }
     public boolean isInternetAvailable() {
         try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.equals("");
+            InetAddress ipAddress= InetAddress.getByName("google.com");
+            return !ipAddress.toString().equals("");
 
         } catch (Exception e) {
             return false;
